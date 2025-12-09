@@ -1,1 +1,1 @@
-# Speaker-Diarization-POC-personal
+# Speaker-Diarization-POC

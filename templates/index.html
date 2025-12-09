@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Diarize Audio Upload</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f4f7fa;
+        padding: 40px;
+      }
+
+      h1 {
+        color: #5d5aff;
+        margin-bottom: 40px;
+        text-align: center;
+        font-size: 36px;
+        margin-top: 0;
+      }
+
+      .upload-area {
+        background-color: #5d5aff;
+        color: white;
+        cursor: pointer;
+        text-align: center;
+        border: none;
+        margin-top: 10px;
+        border: none;
+        border-radius: 10px;
+        padding: 13px 31px;
+        display: inline;
+        width: 112px;
+        /* margin: 0 auto 30px; */
+      }
+
+      .btn-submit {
+        background-color: #ffffff;
+        color: #5d5aff;
+        cursor: pointer;
+        text-align: center;
+        border: none;
+        margin-top: 10px;
+        border: none;
+        border-radius: 10px;
+        padding: 11px 20px;
+        border: 1px solid #5d5aff;
+        display: inline;
+        width: 120px;
+      }
+
+      .upload-area:hover {
+        /* background: #eef7ff; */
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      #loading {
+        font-size: 18px;
+        color: #5d5aff;
+        text-align: center;
+      }
+
+      #transcript {
+        text-align: left;
+        max-width: 700px;
+        margin: 0 auto;
+        background: #ebeaff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: none; /* Initially hidden */
+      }
+
+      .box {
+        width: 394px !important;
+        margin: 0 auto;
+        width: 100%;
+        background: #ebeaff;
+        border-radius: 10px;
+        padding: 180px 90px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .speaker-line {
+        margin-bottom: 12px;
+        font-size: 16px;
+        color: #303030;
+      }
+
+      .speaker-line span {
+        font-weight: bold;
+        color: #5d5aff;
+      }
+
+      .error {
+        color: red;
+        text-align: center;
+      }
+
+      .wrapper {
+        border: 2px solid #ccc;
+        border-radius: 12px;
+        padding: 30px;
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .dropdown-container {
+      margin-bottom: 30px;
+      position: relative; /* For positioning the custom arrow */
+      width: 100%;
+      max-width: 400px; /* Adjust to fit your design */
+    }
+
+      select,
+      button {
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        width: 100%;
+      }
+
+      button {
+        background-color: #5d5aff;
+        color: white;
+        cursor: pointer;
+        border: none;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        opacity: 0.9;
+      }
+
+      .inner-wrapper {
+        display: flex;
+        align-items: self-start;
+        gap: 50px;
+      }
+
+      .btn-upload {
+        text-align: right;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .typing-dots {
+        font-size: 22px;
+        font-weight: bold;
+      }
+
+      .btn-block {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .files-text {
+        text-align: end;
+      }
+
+      .objectives-box {
+        display: none;
+        width: 250px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        position: absolute;
+        top: 50px;
+        right: 50px;
+      }
+      .objectives-box.collapsed {
+        max-height: 0;
+        overflow: hidden;
+        padding: 0;
+        transition: all 0.3s ease;
+      }
+
+      .objectives-box {
+        transition: all 0.3s ease;
+        max-height: 500px; /* set to something big enough to fit content */
+      }
+
+      .objectives-box ul li {
+        margin-bottom: 10px;
+      }
+
+      .objectives-box h6 {
+        font-size: 16px;
+        margin-top: 10px;
+      }
+
+      .objectives-box ul {
+        padding: 0;
+        margin: 20px;
+      }
+
+      .upload-section {
+        position: relative;
+      }
+
+      .typing-dots span {
+        animation: blink 1.4s infinite;
+        opacity: 0;
+      }
+
+      .typing-dots span:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .typing-dots span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .typing-dots span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes blink {
+        0%,
+        80%,
+        100% {
+          opacity: 0;
+        }
+        40% {
+          opacity: 1;
+        }
+      }
+      .placeholder-text {
+      font-size: 18px;
+      color: #5d5aff; 
+      text-align: center;
+      padding: 20px;
+    }
+
+      
+    </style>
+  </head>
+  <body>
+    <div class="upload-section"></div>
+    <div class="wrapper">
+      <div class="objectives-box">
+        <div class="objectives-content">
+          <h6>Objective:</h6>
+          <ul>
+            <li>To develop a system that helps in extracting the text from the Audio Files of format .wav </li>
+            <li>The system will use AI, specifically the speaker-diarization models, to extract meaning full text from the File .</li>
+          </ul>
+        </div>
+        <button type="button" class="btn hide-button">Hide</button>
+      </div>
+      <h1>smartVoice AI</h1>
+      <div class="btn-upload">
+        <h3>Download Sample Audio</h3>
+        <div class="btn-block">
+          <p
+          id="fileNameDisplay"
+          style="color: #333; font-size: 14px; margin: 0"
+        ></p>
+
+          <div
+            class="upload-area"
+            onclick="document.getElementById('fileInput').click();"
+          >
+            Upload
+          </div>
+          <div class="btn-submit" >Submit</div>
+        </div>
+      </div>
+      <div class="inner-wrapper">
+        <div class="left-block">
+
+          <div class="dropdown-container">
+            <select id="sampleSelect">
+              {% for file in sample_files %}
+              <option value="{{ url_for('download_sample', filename=file) }}">
+                {{ file }}
+              </option>
+              {% endfor %}
+            </select>
+            <button onclick="downloadSample()">Download</button>
+          </div>
+        </div>
+        <div class="right-block">
+          <div id="transcript"></div>
+          <div class="box">
+            <div id="placeholder" class="placeholder-text">
+              Your Transcription will appear here
+            </div>
+            <div id="loading" class="hidden">
+              <div class="typing-dots">
+                Processing <span>.</span><span>.</span><span>.</span>
+                <div id="error" class="error"></div>
+              </div>
+            </div>
+          </div>
+          <p
+            style="color: #555; font-size: 14px; margin-top: 10px"
+            class="files-text"
+          >
+            Only <strong>.wav</strong> audio files are supported.
+          </p>
+
+          <!-- Sample Audio Dropdown -->
+
+          <!-- Upload Area -->
+
+          <input
+            type="file"
+            id="fileInput"
+            class="hidden"
+            accept="audio/wav"
+            onchange="uploadFile()"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let selectedFile = null; // Store the selected file
+    
+      // Handle file selection
+      function handleFileSelection() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+        const errorDiv = document.getElementById("error");
+        const fileNameDisplay = document.getElementById("fileNameDisplay");
+        
+    
+        // Reset error message
+        errorDiv.textContent = "";
+        
+    
+        if (!file) {
+          errorDiv.textContent = "No file selected.";
+          return;
+        }
+    
+        // Check if the file is a .wav file
+        if (file.type !== "audio/wav" && !file.name.endsWith(".wav")) {
+          errorDiv.textContent = "Invalid file type. Only .wav files are allowed.";
+          return;
+        }
+    
+        // Store the selected file and display its name
+        selectedFile = file;
+        fileNameDisplay.textContent = `${file.name}`;
+      }
+    
+      // Handle submit button click to call the API
+      async function submitFile() {
+        const errorDiv = document.getElementById("error");
+        const transcriptDiv = document.getElementById("transcript");
+        const loadingDiv = document.getElementById("loading");
+        const placeholderDiv = document.getElementById("placeholder"); // Add this
+    
+        // Reset UI
+        errorDiv.textContent = "";
+        transcriptDiv.innerHTML = "";
+        transcriptDiv.style.display = "none"; // Hide the transcript initially
+        loadingDiv.classList.remove("hidden");
+        placeholderDiv.style.display = "none"; // Hide the placeholder text
+        document.querySelector(".box").style.display = "block";
+    
+        if (!selectedFile) {
+          errorDiv.textContent = "No file selected. Please upload a file first.";
+          loadingDiv.classList.add("hidden");
+          placeholderDiv.style.display = "block"; // Show placeholder again if there's an error
+          return;
+        }
+    
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+    
+        try {
+          const response = await fetch("/diarize", {
+            method: "POST",
+            body: formData,
+          });
+    
+          const data = await response.json();
+          loadingDiv.classList.add("hidden");
+    
+          if (!response.ok) {
+            errorDiv.textContent = data.error || "Something went wrong.";
+            placeholderDiv.style.display = "block"; // Show placeholder again if there's an error
+            return;
+          }
+    
+          // Hide loading box and show transcript
+          document.querySelector(".box").style.display = "none";
+          transcriptDiv.style.display = "block";
+    
+          // Display transcript
+          data.transcript.forEach((line) => {
+            const [speaker, ...words] = line.split(":");
+            const div = document.createElement("div");
+            div.className = "speaker-line";
+            div.innerHTML = `<span>${speaker}:</span> ${words.join(":").trim()}`;
+            transcriptDiv.appendChild(div);
+          });
+        } catch (err) {
+          errorDiv.textContent = "Error: " + err.message;
+          loadingDiv.classList.add("hidden");
+          placeholderDiv.style.display = "block"; // Show placeholder again if there's an error
+        }
+      }
+    
+      // Download sample audio
+      function downloadSample() {
+        const select = document.getElementById("sampleSelect");
+        const selectedUrl = select.value;
+    
+        const link = document.createElement("a");
+        link.href = selectedUrl;
+        link.download = "";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    
+      // Event listeners
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggleBtn = document.querySelector(".hide-button");
+        const content = document.querySelector(".objectives-content");
+        const fileInput = document.getElementById("fileInput");
+        const submitBtn = document.querySelector(".btn-submit");
+    
+        // Toggle objectives visibility
+        toggleBtn.addEventListener("click", function () {
+          const isHidden = content.style.display === "none";
+          content.style.display = isHidden ? "block" : "none";
+          toggleBtn.textContent = isHidden ? "Hide" : "Objectives";
+        });
+    
+        // Handle file input change
+        fileInput.addEventListener("change", handleFileSelection);
+    
+        // Handle submit button click
+        submitBtn.addEventListener("click", submitFile);
+      });
+    </script>
+  </body>
+</html>
